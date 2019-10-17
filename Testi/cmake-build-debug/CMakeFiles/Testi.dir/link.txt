@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/Testi.dir/main.cpp.o  -o Testi 
