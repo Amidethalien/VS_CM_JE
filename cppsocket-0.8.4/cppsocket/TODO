@@ -1,0 +1,6 @@
+- classes for HTTP client/server
+- classes for FTP client/server
+- port the lib to MS Windows and/or Mac
+- test if it works with other Unixes and Cygwin environments
+- support IPv6
+- Use external thread/communication library/classes (libITC ?)

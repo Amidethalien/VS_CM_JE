@@ -1,0 +1,3 @@
+/home/amidethalien/dev/VS_CM_JE/Auto_Socket_1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/amidethalien/dev/VS_CM_JE/Auto_Socket_1/cmake-build-debug/CMakeFiles/Auto_Socket_1.dir
+/home/amidethalien/dev/VS_CM_JE/Auto_Socket_1/cmake-build-debug/CMakeFiles/edit_cache.dir

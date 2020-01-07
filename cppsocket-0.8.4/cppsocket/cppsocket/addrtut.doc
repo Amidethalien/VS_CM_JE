@@ -1,0 +1,94 @@
+/***************************************************************************
+ *   CPPSocket - library                                                   *
+ *                                                                         *
+ *   Copyright (C) 2001 by Ralf-Christian Juergensen                       *
+ *                         <rcj@users.sourceforge.net>                     *
+ *                                                                         *
+ *   This library is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Library General Public License as       *
+ *   published by the Free Software Foundation; either version 2 of the    *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ *   This library is distributed in the hope that it will be usefull, but  *
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of            *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU      *
+ *   Library General Public License for more details.                      *
+ *                                                                         *
+ *   You should have received a copy of the GNU Library General Public     *
+ *   License along with this library; if not, write to the Free Software   *
+ *   Foundation, Inc., 59 Temple Place - Suite 330, Boston,                *
+ *   MA 02111-1307, USA                                                    *
+ ***************************************************************************/
+
+/**
+  @page addrtut Tutorial for addressing with CPPSocket
+
+	At the beginning let me explain the usage of the Address class.
+	This implementation combines the IP-address and the portnumber of a socket.
+	(if found, also all other known ip-addresses and aliasnames)
+
+  Ok, now the code-snippet for a small example:
+  @code
+  01: CPPSocket::Address address("www.linux.org");
+  02:
+  03: cout << "Hostname: " << address.getName() << endl;
+  04:
+  05: cout << "Aliases:";
+  06: for(int i = 0; i < address.getNumAliases(); i++)
+  07: {
+  08:   cout << ' ' << address.getAliasName(i);
+  09: }
+  10: cout << endl;
+  11:
+  12: cout << "IP-Addresses:";
+  13: for(int i = 0; i < address.getNumIPs(); i++)
+  14: {
+  15:   cout << ' ' << address.getIPString(i);
+  16: }
+  17: cout << endl;
+  @endcode
+
+  And now the code in detail:
+
+  @code
+  01: CPPSocket::Address address("www.linux.org");
+  @endcode
+	Here we create an address with the hostname "www.linux.org". It is also possible to specify an ip-address,
+	like "198.182.196.56". Note that this is also a string.
+	In our example a name-lookup is executed right there, too, because the address needs an ip-address.
+	If we directly set an ip-address, which is tested for correctness, no lookup is executed.
+	By the way: You can also force a lookup. For more info about that see CPPSocket::Address.
+
+  @code
+  03: cout << "Hostname: " << address.getName() << endl;
+  @endcode
+  This prints the hostname of the address.
+
+  @code
+  06: for(int i = 0; i < address.getNumAliases(); i++)
+  @endcode
+  There can be more than one name for a host, called aliasnames. But it is also possible that there are no
+	aliasnames at all.
+
+  @code
+  08:   cout << ' ' << address.getAliasName(i);
+  @endcode
+  Now print the i-th alias of this address. The type is @c string like all other texts in this library.
+
+  @code
+  13: for(int i = 0; i < address.getNumIPs(); i++)
+  @endcode
+  It is possible, that an address can have more than one ip-addresses. If this is 0, we probably received an exception
+	before. The must be at least one ip.
+
+  @code
+  15:   cout << ' ' << address.getIPString(i);
+  @endcode
+  Print the i-th IP-address. Note that the IP is returned as a formatted string.
+
+  As you see it isn't complicated to use this class. Now take a look on the other tutorials to see how to use
+	the other classes.
+
+	This class can also be used by people who want to programm with the classic sockets, because the Address can
+	easily converted int a @c sockaddr_in type.
+*/

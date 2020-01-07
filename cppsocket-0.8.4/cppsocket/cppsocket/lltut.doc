@@ -1,0 +1,259 @@
+/***************************************************************************
+ *   CPPSocket - library                                                   *
+ *                                                                         *
+ *   Copyright (C) 2001 by Ralf-Christian Juergensen                       *
+ *                         <rcj@users.sourceforge.net>                     *
+ *                                                                         *
+ *   This library is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Library General Public License as       *
+ *   published by the Free Software Foundation; either version 2 of the    *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ *   This library is distributed in the hope that it will be usefull, but  *
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of            *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU      *
+ *   Library General Public License for more details.                      *
+ *                                                                         *
+ *   You should have received a copy of the GNU Library General Public     *
+ *   License along with this library; if not, write to the Free Software   *
+ *   Foundation, Inc., 59 Temple Place - Suite 330, Boston,                *
+ *   MA 02111-1307, USA                                                    *
+ ***************************************************************************/
+
+/**
+  @page lltut Low-Level Tutorial
+
+	To explain the programming with the low-level class Scoket, I'll implement a TCP-server and -client.
+
+  @section lltutserver A TCP-Server
+
+  A very simple server could look like this:
+  @code
+  01: int main()
+  02: {
+  03:   try
+  04:   {
+  05:     CPPSocket::Socket server;
+  06:     CPPSocket::Address address(CPPSocket::Address::ANY_IP, 1234, false);
+  07:
+  08:     server.open(CPPSocket::Socket::TCP);
+  09:
+  10:     server.setsockopt(CPPSocket::SocketOption::ReuseAddr(1));
+  11:
+  12:     server.bind(address);
+  13:
+  14:     server.listen(5);
+  15:
+  16:     CPPSocket::Address clientAddress;
+  17:     CPPSocket::Socket connection = server.accept(clientAddress);
+  18:
+  19:     CPPSocket::StringBuffer data(1024);
+  20:
+  21:     connection.recv(data);
+  22:
+  23:     clientAddress.lookup();
+  24:
+  25:     cout << "Receive data from " << clientAddress.getName();
+  26:     cout << " on port " << clientAddress.getPort() << endl;
+  27:     cout << string(data) << endl;
+  28:
+  29:     connection.send(data);
+  30:
+  31:     connection.close();
+  32:
+  33:     server.close();
+  34:   }
+  35:   catch(CPPSocket::Exception & error)
+  36:   {
+  37:     cerr << error.getMessage() << endl;
+  38:
+  39:     return EXIT_FAILURE;
+  40:   }
+  41:
+  42:   return EXIT_SUCCESS;
+  43: }
+  @endcode
+
+  In detail:
+
+  @code
+  05:     CPPSocket::Socket server;
+  @endcode
+  Create a closed socket.
+
+  @code
+  06:     CPPSocket::Address address(CPPSocket::Address::ANY_IP, 1234, false);
+  @endcode
+	Initialise the server address. The first argument says, that the system should set its correct ip-address.
+
+	The next argument sets the portnumber to 1234. If we had put a 0 here, the system would have set a free number.
+	The default here is 0.
+
+	And the last argument specifies, that no lookup should be made.
+	If this where @c true, a lookup would be forced. Please note that the default for this is @c false.
+
+  @code
+  08:     server.open(CPPSocket::Socket::TCP);
+  @endcode
+  Open the socket using the TCP-protocol. If something goes wrong an exception is thrown.
+
+  @code
+  10:     server.setsockopt(CPPSocket::SocketOption::ReuseAddr(1));
+  @endcode
+	Just to show how options can be set.
+	This option enables the reuse of an address. In standard the system forces a delay of 2 minutes between the
+	reusage of an address. With this option enabled (set to 1) the address can be reused immediately.
+
+  There are a lot of other option to tune the behaviour of a socket. But I won't explain them all here.
+
+  @code
+  12:     server.bind(address);
+  @endcode
+  Now @e associate the address to the server-socket.
+
+  @code
+  14:     server.listen(5);
+  @endcode
+  Set the maximum of clients in wait-queue to 5.
+
+  @code
+  16:     CPPSocket::Address clientAddress;
+  @endcode
+  Init another address. But now for the clients address. We don't have to set any parameters here, because
+	we'll get all data in the following line of code.
+
+  @code
+  17:     CPPSocket::Socket connection = server.accept(clientAddress);
+  @endcode
+  Poll for a connection. When a client is connected this returnes the socket-descriptor of the new connection.
+	This is used to create a new socket object.
+
+	Aditionally we get the address of the client.
+
+  @code
+  19:     CPPSocket::StringBuffer data(1024);
+  @endcode
+  Data that should be transported, must be put into a buffer. In this case we use a StringBuffer, which is built for
+	strings.
+	The 1024 specified, that the buffer should be 1 kb in size. That means we can receive texts with a maximum of 1024
+	characters (including the trailing 0).
+	The default is 4096 => 4 kb.
+
+  @code
+  21:     connection.recv(data);
+  @endcode
+  Now get the data from the client.
+
+  @code
+  23:     clientAddress.lookup();
+  @endcode
+  Because we want to know who sends us data, make a lookup. After that we'll get it's name, ip-addresses and aliasnames.
+
+  @code
+  25:     cout << "Empfange Daten von " << clientAddress.getName() <<
+  26:          << " auf Port " << clientAddress.getPort() << endl;
+  @endcode
+  Print the hostname and portnumber of the client.
+
+  @code
+  27:     cout << string(data) << endl;
+  @endcode
+  Now print the received text.
+
+  @code
+  29:     connection.send(data);
+  @endcode
+  Just send the text back to the client (like an echo).
+
+  @code
+  31:     connection.close();
+  @endcode
+  Close the connection to the client.
+
+  @code
+  33:     server.close();
+  @endcode
+  ... and the server is closed too.
+
+  @code
+  35:   catch(CPPSocket::Exception & error)
+  @endcode
+  Most methods in the library can throw exceptions when an error occurs. The baseclass for all excpetion in CPPSocket
+	is Exception. If you want to know when an error occurs, you have to put the calls in a try-block and put an
+	appropriate catch after that.
+
+  @code
+  37:     cerr << error.getMessage() << endl;
+  @endcode
+  The Exceptions knows the message and also the method where the error occurred.
+
+  @section lltutclient A TCP-Client
+
+  The client is also very simple:
+  @code
+  01: int main(int argc, char *argv[])
+  02: {
+  03:   try
+  04:   {
+  05:     if(argc != 2)
+  06:     {
+  07:       throw CPPSocket::Exception("main()", "Only one argument allowed.", 0);
+  08:     }
+  09:
+  10:     CPPSocket::Socket client;
+  11:     CPPSocket::Address serverAddress(argv[1], 1234);
+  12:
+  13:     client.open(CPPSocket::Socket::TCP);
+  14:
+  15:     client.connect(serverAddress);
+  16:
+  17:     CPPSocket::StringBuffer data("Hello, World!\n");
+  18:
+  19:     client.send(data);
+  20:
+  21:     CPPSocket::StringBuffer recvData(1024);
+  22:
+  23:     client.recv(recvData);
+  24:     cout << string(recvData) << endl;
+  25:
+  26:     client.close();
+  27:   }
+  28:   catch(CPPSocket::Exception & error)
+  29:   {
+  30:     cerr << error.getMessage() << endl;
+  31:
+  32:     return EXIT_FAILURE;
+  33:   }
+  34:
+  35:   return EXIT_SUCCESS;
+  36: }
+  @endcode
+
+  As you see there no so much differences to the server. So I will explain only these differences.
+
+  @code
+  11:     CPPSocket::Address serverAddress(argv[1], 1234);
+  @endcode
+	Set the address of the server. The hostname (or ip-address) is in @c argv[1].
+
+  @code
+  15:     client.connect(serverAddress);
+  @endcode
+	Instead of the bind() call in the server, we just connect here to the server.
+	The clients address is not important and will be set by the system.
+	But if you are interested in the clients address: getsockname() returns your own address.
+
+  @code
+  17:     CPPSocket::StringBuffer data("Hallo, dies ist ein Test!\n");
+  @endcode
+  To have something to send, create a buffer with some text.
+
+  That's all for the client. You see, it's quite easy :)
+
+  @section tutudp UDP-Socket
+
+	The programming of an UDP-socket is nearly the same like the TCP-server/client.
+	Of course you have to set the UDP-protocol.
+	And for udp you don't have to connect or listen. Just send or receive data with
+	Socket::sendto() or Socket::recvfrom().
+*/

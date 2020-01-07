@@ -1,0 +1,66 @@
+/***************************************************************************
+ *   CPPSocket - library                                                   *
+ *                                                                         *
+ *   Copyright (C) 2001 by Ralf-Christian Juergensen                       *
+ *                         <rcj@users.sourceforge.net>                     *
+ *                                                                         *
+ *   This library is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Library General Public License as       *
+ *   published by the Free Software Foundation; either version 2 of the    *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ *   This library is distributed in the hope that it will be usefull, but  *
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of            *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU      *
+ *   Library General Public License for more details.                      *
+ *                                                                         *
+ *   You should have received a copy of the GNU Library General Public     *
+ *   License along with this library; if not, write to the Free Software   *
+ *   Foundation, Inc., 59 Temple Place - Suite 330, Boston,                *
+ *   MA 02111-1307, USA                                                    *
+ ***************************************************************************/
+
+/**
+  @mainpage
+
+  @image html cppsocket_logo_low.jpg "Version 0.8.3"
+
+  <center>
+  A small and easy to use C++ library for programming with TCP and UDP sockets on Linux/Unix
+
+  Development <a href="mailto:rcj@users.sourceforge.net">Ralf-Christian Jürgensen</a><br>
+  with support by <a href="mailto:exner@fh-flensburg.de">Prof. Dr. Exner</a><br>
+  <a href="http://www.fh-flensburg.de">FH-Flensburg</a><br>
+  </center>
+
+  @section intro Introduction
+
+	CPPSocket is a small Classlibrary for C++ that supports a easy usage of socket-programming for
+	networking-software.
+	It provides a simple object-oriented interface to the classic C Library calls. Additionally it provides
+	a simplified abstraction for creating clients and servers.
+
+	With CPPSocket supports the following network protocols:
+	- TCP (transmission control protocol; needs an established connection from one host to another)
+	- UDP (user datagram protocol; packets can be sent without an established connection)
+	- IPv4 (internet protocol version 4; uses 32-bit network addresses)
+	
+	These protocols are what may also be called TCP/IP.
+
+  The library provides two layers of abstraction:
+	- Low-Level \n
+    This is a simple oo interface of the classic socket calls.
+		But it provides some (optional) abstractions for addressing and buffering.
+		Usefull for more experienced programmers, that have already worked with classic sockets.
+
+	- High-Level \n
+    This provides somewhat more abstraction and ignores some functionality of the full blown
+		sockets.
+		But nevertheless it is quite usefull and makes programming of networking software very easy.
+		So it's intended to be used by novice programmers or those who don't want the maximum
+		complexity/flexibility but an easy to use network-interface.
+
+  The @ref tut explains the usage of the interfaces.
+
+  (c) 2001 Ralf-Christian Jürgensen, @ref license
+*/

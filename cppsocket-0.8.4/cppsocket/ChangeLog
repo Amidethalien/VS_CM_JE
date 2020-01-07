@@ -1,0 +1,29 @@
+ChangesLog before 0.8.1 where lost :(
+
+0.8.4
+    - Fixes to threaded server classes (Thomas Vanier)
+    - Fixes to thread class (Thomas Vanier)
+    - Increase extensibility of some high-level classes (Thomas Vanier)
+    
+0.8.3
+    - Added flags to TCPConnection. Contributed by Paul Elliott.
+    - Removed opened flag in Socket
+    - Can now be compiled even if no pthread lib is installed.
+    - Added wait() in Socket.
+    - TCPConnection::<<() returns now reference to itself. Contributed by Tobias Jahn.
+
+0.8.2
+    - Change option declarations to typedefs.
+
+0.8.1
+	Some improvements in Socket class:
+	- Socket behaves now like a file-descriptor
+	  (Constructor, assignment, cast)
+
+	Added wait4Connection() in TCPServer
+	and use this in TCPThreadedServer.
+	Additionally the threaded server gave control
+	to the listen-thread.
+	The server does only create this thread and stops it.
+
+	Translate the whole comments and documents to english :)

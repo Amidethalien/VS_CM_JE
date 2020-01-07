@@ -1,0 +1,340 @@
+/***************************************************************************
+ *   CPPSocket - library                                                   *
+ *                                                                         *
+ *   Copyright (C) 2001 by Ralf-Christian Juergensen                       *
+ *                         <rcj@users.sourceforge.net>                     *
+ *                                                                         *
+ *   This library is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Library General Public License as       *
+ *   published by the Free Software Foundation; either version 2 of the    *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ *   This library is distributed in the hope that it will be usefull, but  *
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of            *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU      *
+ *   Library General Public License for more details.                      *
+ *                                                                         *
+ *   You should have received a copy of the GNU Library General Public     *
+ *   License along with this library; if not, write to the Free Software   *
+ *   Foundation, Inc., 59 Temple Place - Suite 330, Boston,                *
+ *   MA 02111-1307, USA                                                    *
+ ***************************************************************************/
+
+/**
+  @page hltut High-Level Tutorial
+
+	While the low-level interface is quite powerfull, it is still not easy to use.
+	If you just want a simple implementation and you do not need the full blown functionality you can
+	use the high-level interface.
+	These classes provide all you need and are much simpler to use.
+
+	To prove I'll show you another tcp-server and client and a threaded server.
+
+  @section hltcpserver TCP Server
+
+  @code
+  01: int main()
+  02: {
+  03:   try
+  04:   {
+  05:     CPPSocket::TCPServer server;
+  06:
+  07:     server.start();
+  08:
+  09:     CPPSocket::Address serverAddress;
+  10:     serverAddress = server.getAddress();
+  11:     serverAddress.lookup();
+  12:
+  13:     cout << "Server " << serverAddress.getName() << " waits on port " << serverAddress.getPort() << endl;
+  14:
+  15:     CPPSocket::TCPConnection* connection;
+  16:     CPPSocket::Address clientAddress;
+  17:
+  18:     connection = server.getConnection(clientAddress);
+  19:     clientAddress.lookup();
+  20:
+  21:     string text;
+  22:
+  23:     *connection >> text;
+  24:
+  25:     cout << "Client " << clientAddress.getName() << " has sent the following text:" << endl;
+  26:     cout << text << endl;
+  27:
+  28:     *connection << "Hello!";
+  29:
+  30:     connection->disconnect();
+	31:			delete connection;
+  32:
+  33:     server.stop();
+  34:   }
+  35:   catch(Exception & error)
+  36:   {
+  37:     cerr << error.getMessage() << endl;
+  38:
+  39:     return EXIT_FAILURE;
+  40:   }
+  41:
+  42:   return EXIT_SUCCESS;
+  43: }
+  @endcode
+
+  The code details:
+
+  @code
+  05:     CPPSocket::TCPServer server;
+  @endcode
+  Create a new server.
+
+  @code
+  07:     server.start();
+  @endcode
+  Start the server. For the listening port a free portnumber is chosen. But you can specify a portnumber here.
+
+  @code
+  09:     CPPSocket::Address serverAddress;
+  10:     serverAddress = server.getAddress();
+  11:     serverAddress.lookup();
+  12:
+  13:     cout << "Server " << serverAddress.getName() << " waits on Port " << serverAddress.getPort() << endl;
+  @endcode
+  Because we want to know on what port the server waits for connections we execute a lookup and then print this
+	information on the screen.
+
+  @code
+  15:     CPPSocket::TCPConnection* connection;
+  16:     CPPSocket::Address clientAddress;
+  17:
+  18:     connection = server.getConnection(clientAddress);
+  19:     clientAddress.lookup();
+  @endcode
+  Now let's wait for a client. When there is a new client connected, we'll get a pointer to a new created TCPConnection.
+	Please note, that you have to delete the connection, when you don't need it anymore.
+	Additionally we make a lookup, to get the hostname of the client.
+
+  @code
+  21:     string text;
+  22:
+  23:     *connection >> text;
+  @endcode
+  And next we want to get some text from the client. As you see, this looks like the @c cin of the standard c++ library.
+
+  @code
+  25:     cout << "Client " << clientAddress.getName() << " has sent the following text:" << endl;
+  26:     cout << text << endl;
+  @endcode
+  Now print the hostname and the text.
+
+  @code
+  28:     *connection << "Hallo!";
+  @endcode
+  As a response send some text back.
+
+  @code
+  30:     connection->disconnect();
+	31:			delete connection;
+  32:
+  33:     server.stop();
+  @endcode
+  Now we can shut down the connection and the server.
+
+  The exceptionhandling is the same as in the low-level tutorial.
+
+  @section hltcpclient TCP Client
+
+  @code
+  01: int main(int argc, char *argv[])
+  02: {
+  03:   try
+  04:   {
+  05:     if(argc != 3)
+  06:     {
+  07:        throw CPPSocket::Exception("main()", "Two arguments expected.", 0);
+  08:     }
+  09:
+  10:     TCPClient client;
+  11:
+  12:     client.connect(Address(argv[1], atoi(argv[2])));
+  13:
+  14:     client << "How are you!?";
+  15:
+  16:     string text;
+  17:
+  18:     client >> text;
+  19:
+  20:     Address serverAddress = client.getConnectedAddress();
+  21:     serverAddress.lookup();
+  22:
+  23:     cout << "Data received from server " << serverAddress.getName() << ": " << text << endl;
+  24:
+  25:     client.disconnect();
+  26:   }
+  27:   catch(Exception & error)
+  28:   {
+  29:     cerr << error.getMessage() << endl;
+  30:
+  31:     return EXIT_FAILURE;
+  32:   }
+  33:
+  34:   return EXIT_SUCCESS;
+  35: }
+  @endcode
+
+  A short explanation:
+
+  @code
+  10:     TCPClient client;
+  @endcode
+  Create client object.
+
+  @code
+  12:     client.connect(Address(argc[1], atoi(argc[2])));
+  @endcode
+  Connect to server. the IP-address or hostname is the first argument to this program and the portnumber the second.
+
+  @code
+  14:     client << "How are you!?";
+  15:
+  16:     string text;
+  17:
+  18:     client >> text;
+  @endcode
+  Now send some text to the server and then wait for some returning text.
+
+  @code
+  20:     Address serverAddress = client.getConnectedAddress();
+  21:     serverAddress.lookup();
+  22:
+  23:     cout << "Daten received from server " << serverAddress.getName() << ": " << text << endl;
+  @endcode
+  Get the address of the server, perform a lookup and print the hostname and text.
+
+  @code
+  25:     client.disconnect();
+  @endcode
+  Close the connection.
+
+  @section threadserver Concurrent TCP Server
+
+  @code
+  01: class MyService : public TCPService
+  02: {
+  03: public:
+  04:   int run();
+  05: };
+  06:
+  07: int MyService::run()
+  08: {
+  09:   try
+  10:   {
+  11:     string text;
+  12:     Address clientAddress = connection.getConnectedAddress();
+  13:     clientAddress.lookup();
+  14:
+  15:     connection >> text;
+  16:
+  17:     cout << "Client " << clientAddress.getName() << " sent some text:" << endl;
+  18:     cout << text << endl;
+  19:
+  20:     connection << "Hello!";
+  21:
+  22:     connection.disconnect();
+  23:
+  24:   }
+  25:   catch(Exception & error)
+  26:   {
+  27:     cerr << error.getMessage() << endl;
+  28:   }
+  29: }
+  30:
+  31: int main()
+  32: {
+  33:   try
+  34:   {
+  35:     TCPThreadedServer server;
+  36:
+  37:     TCPServiceFactoryTemplate<MyService> factory;
+  38:
+  39:     server.start(factory, 1234);
+  40:
+  41:     CPPSocket::Address serverAddress;
+  42:     serverAddress = server.getAddress();
+  43:     serverAddress.lookup();
+  44:
+  45:     cout << "Server " << serverAddress.getName() << " waits on port " << serverAddress.getPort() << endl;
+  46:
+  47:     do
+  48:     {
+  49:       sleep(100);
+  50:     } while(server.processedClients() < 10);
+  51:
+  52:     server.stop();
+  53:   }
+  54:   catch(Exception & error)
+  55:   {
+  56:     cerr << error.getMessage() << endl;
+  57:
+  58:     return EXIT_FAILURE;
+  59:   }
+  60:
+  61:   return EXIT_SUCCESS;
+  62: }
+  @endcode
+
+  The most important code in detail:
+
+  @code
+  01: class MyService : public TCPService
+  02: {
+  03: public:
+  04:   int run();
+  05: };
+  @endcode
+  Define an own service. Therefore you have to overload the run() method.
+
+  @code
+  07: int MyService::run()
+  08: {
+  09:   try
+  10:   {
+  11:     string text;
+  12:     Address clientAddress = connection.getConnectedAddress();
+  13:     clientAddress.lookup();
+  14:
+  15:     connection >> text;
+  16:
+  17:     cout << "Client " << clientAddress.getName() << " sent some text:" << endl;
+  18:     cout << text << endl;
+  19:
+  20:     connection << "Hello!";
+  21:
+  22:     connection.disconnect();
+  23:
+  24:   }
+  25:   catch(Exception & error)
+  26:   {
+  27:     cerr << error.getMessage() << endl;
+  28:   }
+  29: }
+  @endcode
+  run() itself is nearly identical to the other server. But the connection is already given.
+
+  @code
+  37:     TCPServiceFactoryTemplate<MyService> factory;
+  38:
+  39:     server.start(factory, 1234);
+  @endcode
+  The @c factory is needed to create new services. The server is started on port 1234.
+
+  @code
+  47:     do
+  48:     {
+  49:       sleep(100);
+  50:     } while(server.processedClients() < 10);
+  51:
+  52:     server.stop();
+  @endcode
+	The server should process 10 clients and then stop. @c sleep(100) is used to block the process (saves cpu time).
+	But the server itself (the listener) is still running in it's own thread. And this is also true for all connections.
+
+  The rest of the code should be discussed in the other code-samples.
+*/

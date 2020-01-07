@@ -1,0 +1,51 @@
+CPP Socket library - 0.8.4
+
+A small and easy to use C++ library for programming with TCP and UDP sockets on Linux/Unix
+
+Development Ralf-Christian Jürgensen <rcj@users.sourceforge.net>
+
+Introduction
+
+CPPSocket is a small Classlibrary for C++ that supports a easy usage of socket-programming for
+networking-software.
+It provides a simple object-oriented interface to the classic C Library calls. Additionally it provides
+a simplified abstraction for creating clients and servers.
+
+With CPPSocket supports the following network protocols:
+- TCP (transmission control protocol; needs an established connection from one host to another)
+- UDP (user datagram protocol; packets can be sent without an established connection)
+- IPv4 (internet protocol version 4; uses 32-bit network addresses)
+
+These protocols are what may also be called TCP/IP.
+
+The library provides two layers of abstraction:
+- Low-Level
+  This is a simple oo interface of the classic socket calls.
+  But it provides some (optional) abstractions for addressing and buffering.
+  Usefull for more experienced programmers, that have already worked with classic sockets.
+
+- High-Level
+  This provides somewhat more abstraction and ignores some functionality of the full blown
+  sockets.
+  But nevertheless it is quite usefull and makes programming of networking software very easy.
+  So it's intended to be used by novice programmers or those who don't want the maximum
+  complexity/flexibility but an easy to use network-interface.
+
+Compile & Install
+
+This is only a very short description. If you have further questions, please see file INSTALL for more infos.
+
+On most systems the usual
+
+# ./configure
+# make
+# make install
+
+procedure should be ok. This will install the library under /usr/local for default.
+(includes in /usr/local/include and lib in /usr/local/lib).
+
+Thanks go to
+- Tobias Jahn
+- Thomas Vanier
+
+(c) 2001, 2002, 2003 Ralf-Christian Jürgensen
