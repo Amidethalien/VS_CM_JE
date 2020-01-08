@@ -1,0 +1,3 @@
+/home/EggieIV/Projects/git/VS_CM_JE/Code/build-Testserver-Desktop-Debug/CMakeFiles/rebuild_cache.dir
+/home/EggieIV/Projects/git/VS_CM_JE/Code/build-Testserver-Desktop-Debug/CMakeFiles/Testserver.dir
+/home/EggieIV/Projects/git/VS_CM_JE/Code/build-Testserver-Desktop-Debug/CMakeFiles/edit_cache.dir
