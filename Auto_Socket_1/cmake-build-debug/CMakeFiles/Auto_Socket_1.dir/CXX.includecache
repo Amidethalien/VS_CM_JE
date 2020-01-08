@@ -9,4 +9,8 @@
 /home/amidethalien/dev/VS_CM_JE/Auto_Socket_1/main.cpp
 iostream
 -
+sys/socket.h
+-
+netinet/in.h
+-
 
